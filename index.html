@@ -1,1 +1,41 @@
-
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zen's Laptop Clubhouse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css"></head><body>
+<nav class="sitebar"><div class="nav"><a class="logo" href="index.html">🎀 ZEN'S CLUBHOUSE 🖤</a><a href="learn.html">📚 Learn</a><a href="create.html">🎨 Create</a><a href="character-maker.html">🖤 Make a Weirdo</a><a href="my-stuff.html">⭐ My Stuff</a></div></nav>
+<main class="wrap">
+<section class="hero"><h1>HI, ZEN 💖</h1><p>learn something · make something · be weird</p></section>
+<section class="card center">
+<h2>🎂 YOUR BIRTHDAY IS COMING!</h2>
+<div id="countdown" class="countdown" aria-live="polite">
+<div class="timebox"><strong id="days">--</strong><span>DAYS</span></div>
+<div class="timebox"><strong id="hours">--</strong><span>HOURS</span></div>
+<div class="timebox"><strong id="mins">--</strong><span>MINUTES</span></div>
+<div class="timebox"><strong id="secs">--</strong><span>SECONDS</span></div>
+</div><div id="birthdayMsg" class="hide"><h2>🎉 HAPPY BIRTHDAY, ZEN! 🎂</h2><p>Today is YOUR day. Go make something amazing.</p></div>
+</section>
+<section style="margin-top:20px" class="grid">
+<a class="card biglink" href="learn.html"><h2>📚 LEARN</h2><p>Words, sounds, counting, math — but make it fun.</p></a>
+<a class="card biglink" href="character-maker.html"><h2>🖤 MAKE A WEIRDO</h2><p>Build an emo, skater, spooky, pink-punk character.</p></a>
+<a class="card biglink" href="art-studio.html"><h2>🎨 ART STUDIO</h2><p>Draw, doodle, color, erase, save your masterpiece.</p></a>
+<a class="card biglink" href="my-stuff.html"><h2>⭐ MY STUFF</h2><p><span data-stars>0</span> stars · saved weirdos · progress</p></a>
+</section>
+<section class="card" style="margin-top:20px"><h2>⭐ TODAY'S ZEN CHALLENGE</h2><div class="challenge-list">
+<div class="challenge"><span>📖 Play one reading game</span><a class="btn" href="reading.html">GO</a></div>
+<div class="challenge"><span>🔢 Solve some math</span><a class="btn" href="math.html">GO</a></div>
+<div class="challenge"><span>🎨 Make something</span><a class="btn" href="create.html">GO</a></div>
+</div></section>
+</main><script src="js/common.js"></script><script>
+function tick(){
+ const now=new Date(), y=now.getFullYear();
+ let target=new Date(y,6,27,0,0,0);
+ const end=new Date(y,6,28,0,0,0);
+ if(now>=target && now<end){document.getElementById("countdown").classList.add("hide");document.getElementById("birthdayMsg").classList.remove("hide");return}
+ if(now>=end) target=new Date(y+1,6,27,0,0,0);
+ const d=target-now;
+ days.textContent=Math.floor(d/86400000);hours.textContent=Math.floor(d/3600000)%24;mins.textContent=Math.floor(d/60000)%60;secs.textContent=Math.floor(d/1000)%60;
+}
+tick();setInterval(tick,1000);
+</script></body></html>
