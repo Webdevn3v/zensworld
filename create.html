@@ -1,1 +1,11 @@
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Create</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"></head><body>
+<nav class="sitebar"><div class="nav"><a class="logo" href="index.html">🎀 ZEN'S CLUBHOUSE 🖤</a><a href="learn.html">📚 Learn</a><a href="character-maker.html">🖤 Make a Weirdo</a></div></nav>
+<main class="wrap"><header class="hero"><h1>🎨 CREATE</h1><p>make whatever is in your head</p></header><div class="grid">
+<a class="card biglink" href="art-studio.html"><h2>🖍️ ART STUDIO</h2><p>Draw with pencil, neon, chunky brush, stamps and more.</p></a>
+<a class="card biglink" href="character-maker.html"><h2>🖤 MAKE A WEIRDO</h2><p>Build your own emo/skater/pink-punk crew.</p></a>
+<div class="card"><h2>📝 Story Starter</h2><p>Pick a weird beginning and make up the rest.</p><button id="storyBtn" class="btn">GIVE ME ONE</button><p id="story" class="tag"></p></div>
+</div></main><script>
+const starts=["A skater girl finds a tiny door under her bed...","A black cat steals a glittery skateboard...","At midnight, every drawing in Zen's notebook wakes up...","A pink haunted house appears at the end of the street...","A girl puts on headphones and suddenly can hear what plants are thinking..."];
+storyBtn.addEventListener("click",()=>story.textContent=starts[Math.floor(Math.random()*starts.length)]);
+</script></body></html>
