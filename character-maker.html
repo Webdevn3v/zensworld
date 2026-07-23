@@ -1,1 +1,46 @@
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Make Your Own Weirdo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"></head><body>
+<nav class="sitebar"><div class="nav"><a class="logo" href="index.html">🎀 ZEN'S CLUBHOUSE 🖤</a><a href="create.html">🎨 Create</a><a href="my-stuff.html">⭐ My Stuff</a></div></nav>
+<main class="wrap"><header class="hero"><h1>🖤 MAKE YOUR OWN WEIRDO</h1><p>build them · dress them · name them · make them weird</p></header>
+<div class="avatar-layout">
+<section class="avatar-stage" id="stage"><div class="avatar" id="avatar">
+<div class="av-hair-back"></div><div class="av-head"></div><div class="av-body"></div><div class="av-legs"></div><div class="av-hair-front"></div>
+<div class="av-eyes"><i class="eye"></i><i class="eye"></i></div><div class="av-mouth"></div><div class="av-shoes"><i class="shoe"></i><i class="shoe"></i></div><div class="av-accessory" id="acc">🛹</div><div class="av-hat" id="hat"></div>
+</div></section>
+<section class="card">
+<div class="row"><button class="btn green" id="randomize">🎲 RANDOM WEIRDO</button><button class="btn alt" id="presetEmo">🖤 EMO</button><button class="btn alt" id="presetPink">🎀 BARBIE SKATER</button><button class="btn alt" id="presetSpooky">🕷️ SPOOKY</button></div>
+<div class="option-section"><h3>Skin</h3><div class="options" id="skin"></div></div>
+<div class="option-section"><h3>Hair</h3><div class="options" id="hair"></div></div>
+<div class="option-section"><h3>Top</h3><div class="options" id="top"></div></div>
+<div class="option-section"><h3>Bottom</h3><div class="options" id="bottom"></div></div>
+<div class="option-section"><h3>Shoes</h3><div class="options" id="shoe"></div></div>
+<div class="option-section"><h3>Accessory</h3><div class="options" id="accessory"></div></div>
+<div class="option-section"><h3>Hat / Hair Thing</h3><div class="options" id="hatOpts"></div></div>
+<div class="option-section"><h3>Background</h3><div class="options" id="background"></div></div>
+<label><strong>What's their name?</strong><input id="charName" style="width:100%;padding:12px;border-radius:12px;border:0;margin:6px 0 12px" maxlength="20" placeholder="Raven, Luna, Skully..."></label>
+<label><strong>Personality</strong><select id="personality" style="width:100%;padding:12px;border-radius:12px;margin:6px 0 14px"><option>Mysterious</option><option>Creative</option><option>Fearless</option><option>Weird</option><option>Funny</option><option>Chill</option><option>Sweet</option><option>Loud</option></select></label>
+<button class="btn" id="saveChar">💾 SAVE TO MY CREW</button><p id="saveMsg" class="tag"></p>
+</section></div></main><script src="js/common.js"></script><script>
+const state={skin:"#d5a07d",hair:"#17121c",top:"#111111",bottom:"#6b315f",shoe:"#111111",accessory:"🛹",hat:"",background:"pink"};
+const sets={
+skin:["#f2d2bd","#d9a37f","#b87956","#8a563d","#5c3527"],
+hair:["#17121c","#5a321e","#e7bd76","#a51d50","#ff55a8","#7344c8","#3c64c7"],
+top:["#111111","#ff2d92","#6d318f","#ffffff","#2d415f","#8e1638"],
+bottom:["#222222","#6b315f","#b11365","#3c506d","#7c2020"],
+shoe:["#111111","#ffffff","#ff2d92","#6c3c95"],
+accessory:["🛹","🎧","🎸","👜","📚","🖤","⭐","🦇"],
+hat:["","🎀","🧢","🎧","👑","🕷️"],
+background:[["pink","linear-gradient(#fac4df,#bca3ff)"],["night","linear-gradient(#141229,#47235f)"],["skate","linear-gradient(#a6d7ff,#737983)"],["spooky","linear-gradient(#32243a,#0d0d0f)"],["green","linear-gradient(#d7ff9f,#86b56c)"]]
+};
+function buttons(id,key,vals){let box=document.getElementById(id);vals.forEach(v=>{let value=Array.isArray(v)?v[0]:v,label=Array.isArray(v)?v[0]:v,b=document.createElement("button");b.className="swatch";b.type="button";if(key.match(/skin|hair|top|bottom|shoe/)){b.style.background=value;b.title=key}else b.textContent=value||"NONE";b.addEventListener("click",()=>{state[key]=value;render()});box.appendChild(b)})}
+buttons("skin","skin",sets.skin);buttons("hair","hair",sets.hair);buttons("top","top",sets.top);buttons("bottom","bottom",sets.bottom);buttons("shoe","shoe",sets.shoe);buttons("accessory","accessory",sets.accessory);buttons("hatOpts","hat",sets.hat);buttons("background","background",sets.background);
+function render(){avatar.style.setProperty("--skin",state.skin);avatar.style.setProperty("--hair",state.hair);avatar.style.setProperty("--top",state.top);avatar.style.setProperty("--bottom",state.bottom);avatar.style.setProperty("--shoe",state.shoe);acc.textContent=state.accessory;hat.textContent=state.hat;let bg=sets.background.find(x=>x[0]===state.background);stage.style.background=bg?bg[1]:sets.background[0][1]}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function random(){state.skin=pick(sets.skin);state.hair=pick(sets.hair);state.top=pick(sets.top);state.bottom=pick(sets.bottom);state.shoe=pick(sets.shoe);state.accessory=pick(sets.accessory);state.hat=pick(sets.hat);state.background=pick(sets.background)[0];render()}
+randomize.addEventListener("click",random);
+presetEmo.addEventListener("click",()=>{Object.assign(state,{hair:"#17121c",top:"#111111",bottom:"#222222",shoe:"#111111",accessory:"🎧",hat:"🕷️",background:"night"});render()});
+presetPink.addEventListener("click",()=>{Object.assign(state,{hair:"#ff55a8",top:"#ff2d92",bottom:"#6b315f",shoe:"#ffffff",accessory:"🛹",hat:"🎀",background:"pink"});render()});
+presetSpooky.addEventListener("click",()=>{Object.assign(state,{hair:"#17121c",top:"#6d318f",bottom:"#111111",shoe:"#111111",accessory:"🦇",hat:"🕷️",background:"spooky"});render()});
+saveChar.addEventListener("click",()=>{let name=charName.value.trim()||"Unnamed Weirdo";let chars=ZEN.load("characters",[]);chars.push({...state,name,personality:personality.value,id:Date.now()});ZEN.save("characters",chars);ZEN.star(3);saveMsg.textContent=name+" joined your crew! 🖤";charName.value=""});
+render();
+</script></body></html>
