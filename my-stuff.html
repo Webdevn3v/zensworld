@@ -1,1 +1,12 @@
 
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Stuff</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"></head><body>
+<nav class="sitebar"><div class="nav"><a class="logo" href="index.html">🎀 ZEN'S CLUBHOUSE 🖤</a><a href="learn.html">📚 Learn</a><a href="character-maker.html">🖤 Make a Weirdo</a></div></nav>
+<main class="wrap"><header class="hero"><h1>⭐ MY STUFF</h1><p>look what you've been doing</p></header>
+<div class="grid"><div class="card center"><h2>⭐ STARS</h2><p style="font-size:3rem;margin:0"><strong data-stars>0</strong></p></div><div class="card"><h2>📚 PROGRESS</h2><div id="stats"></div></div></div>
+<section class="card" style="margin-top:20px"><div class="row"><h2 style="margin-right:auto">🖤 MY CREW</h2><a class="btn" href="character-maker.html">MAKE ANOTHER</a></div><div id="crew" class="characters"></div></section>
+</main><script src="js/common.js"></script><script>
+const labels={sightWords:"Sight Words",phonics:"Phonics",wordBuilder:"Word Builder",rhyming:"Rhyming",counting:"Counting",numberRecognition:"Numbers",addition:"Addition",subtraction:"Subtraction",patterns:"Patterns"};
+const s=ZEN.load("stats",{});stats.innerHTML=Object.keys(s).length?Object.entries(s).map(([k,v])=>`<p><strong>${labels[k]||k}</strong> — ${v.correct} right out of ${v.total}</p>`).join(""):"<p>Play some learning games and your progress will show up here.</p>";
+function drawCrew(){let chars=ZEN.load("characters",[]);crew.innerHTML=chars.length?"":"<p>No weirdos yet. Go make your first one!</p>";chars.forEach(ch=>{let d=document.createElement("div");d.className="char-card";d.innerHTML=`<div class="char-mini">${ch.accessory||"🖤"}</div><h3>${ch.name}</h3><p>${ch.personality}</p><p class="tag">${ch.background} vibes</p><button class="btn alt">DELETE</button>`;d.querySelector("button").addEventListener("click",()=>{ZEN.save("characters",ZEN.load("characters",[]).filter(x=>x.id!==ch.id));drawCrew()});crew.appendChild(d)})}drawCrew();
+</script></body></html>
