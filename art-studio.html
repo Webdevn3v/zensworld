@@ -1,1 +1,27 @@
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zen's Art Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"></head><body>
+<nav class="sitebar"><div class="nav"><a class="logo" href="index.html">🎀 ZEN'S CLUBHOUSE 🖤</a><a href="create.html">⬅ Create</a><a href="character-maker.html">🖤 Make a Weirdo</a></div></nav>
+<main class="wrap"><header class="hero"><h1>🎨 ZEN'S ART STUDIO</h1><p>make a mess. undo exists.</p></header>
+<section class="card">
+<div class="tool-panel">
+<label>Color <input id="color" type="color" value="#ff2d92"></label>
+<label>Size <input id="size" type="range" min="2" max="50" value="10"></label>
+<button class="btn" data-tool="brush">🖌️ Brush</button><button class="btn alt" data-tool="eraser">🧽 Eraser</button>
+<button class="btn ghost" data-stamp="⭐">⭐ Stamp</button><button class="btn ghost" data-stamp="💖">💖 Stamp</button><button class="btn ghost" data-stamp="🖤">🖤 Stamp</button><button class="btn ghost" data-stamp="🦇">🦇 Stamp</button>
+<button class="btn alt" id="undo">↩️ Undo</button><button class="btn alt" id="clear">🗑️ Clear</button><button class="btn green" id="download">💾 Save Picture</button>
+</div><canvas id="drawCanvas" width="1000" height="650"></canvas></section></main>
+<script src="js/common.js"></script><script>
+const c=drawCanvas,ctx=c.getContext("2d");ctx.fillStyle="white";ctx.fillRect(0,0,c.width,c.height);let drawing=false,tool="brush",stamp=null,history=[];
+function saveState(){history.push(c.toDataURL());if(history.length>20)history.shift()}
+saveState();
+function pos(e){const r=c.getBoundingClientRect(),p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(c.width/r.width),y:(p.clientY-r.top)*(c.height/r.height)}}
+function start(e){e.preventDefault();saveState();let p=pos(e);if(stamp){ctx.font="56px serif";ctx.fillText(stamp,p.x-24,p.y+20);ZEN.complete("art");return}drawing=true;ctx.beginPath();ctx.moveTo(p.x,p.y)}
+function move(e){if(!drawing)return;e.preventDefault();let p=pos(e);ctx.lineCap="round";ctx.lineJoin="round";ctx.lineWidth=+size.value;ctx.strokeStyle=tool==="eraser"?"white":color.value;ctx.lineTo(p.x,p.y);ctx.stroke()}
+function end(){if(drawing){drawing=false;ZEN.complete("art")}}
+["mousedown","touchstart"].forEach(x=>c.addEventListener(x,start,{passive:false}));["mousemove","touchmove"].forEach(x=>c.addEventListener(x,move,{passive:false}));["mouseup","mouseleave","touchend"].forEach(x=>c.addEventListener(x,end));
+document.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>{tool=b.dataset.tool;stamp=null}));
+document.querySelectorAll("[data-stamp]").forEach(b=>b.addEventListener("click",()=>stamp=b.dataset.stamp));
+clear.addEventListener("click",()=>{saveState();ctx.fillStyle="white";ctx.fillRect(0,0,c.width,c.height)});
+undo.addEventListener("click",()=>{if(history.length<2)return;history.pop();let img=new Image();img.onload=()=>ctx.drawImage(img,0,0);img.src=history[history.length-1]});
+download.addEventListener("click",()=>{let a=document.createElement("a");a.download="zens-masterpiece.png";a.href=c.toDataURL("image/png");a.click();ZEN.star(2)});
+</script></body></html>
