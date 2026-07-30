@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07050f">
+  <title>Zen's Clubhouse</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div class="space-bg" aria-hidden="true">
+    <div class="nebula nebula-one"></div>
+    <div class="nebula nebula-two"></div>
+    <div class="stars stars-one"></div>
+    <div class="stars stars-two"></div>
+  </div>
+
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Zen's Clubhouse home" aria-current="page">
+      <span class="brand-mark">✦</span>
+      <span>ZEN'S CLUBHOUSE</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="learn.html">Learn</a>
+      <a href="create.html">Create</a>
+      <a href="character-maker.html">Make a Weirdo</a>
+      <a href="my-stuff.html">My Stuff</a>
+    </nav>
+
+    <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="false" aria-label="Toggle clubhouse sounds">
+      <span aria-hidden="true">♫</span>
+    </button>
+  </header>
+
+  <main class="shell" id="main-content">
+    <section class="hero-panel glass-panel">
+      <div class="hero-copy">
+        <p class="eyebrow">JARVIE ONLINE</p>
+        <h1>Good afternoon, Zen.</h1>
+        <p class="hero-text" id="jarvieGreeting">Ready to make something awesome today?</p>
+
+        <div class="hero-actions">
+          <a class="primary-btn" href="learn.html">Start learning</a>
+          <button class="secondary-btn" id="jarvieIdeaBtn" type="button">Ask Jarvie</button>
+        </div>
+      </div>
+
+      <div class="jarvie-stage" aria-label="Jarvie, Zen's learning companion">
+        <div class="jarvie-shadow" aria-hidden="true"></div>
+        <button class="jarvie-orb" id="jarvieOrb" type="button" aria-label="Talk to Jarvie">
+          <span class="orb-core"></span>
+          <span class="orb-ring orb-ring-one"></span>
+          <span class="orb-ring orb-ring-two"></span>
+          <span class="orb-spark orb-spark-one"></span>
+          <span class="orb-spark orb-spark-two"></span>
+          <span class="orb-spark orb-spark-three"></span>
+        </button>
+        <div class="speech-bubble" id="jarvieSpeech" role="status" aria-live="polite">
+          Tap me when you need an idea.
+        </div>
+      </div>
+    </section>
+
+    <section class="activity-grid" aria-label="Choose an activity">
+      <a class="activity-card learn-card" href="learn.html">
+        <span class="activity-icon" aria-hidden="true">📚</span>
+        <span class="activity-label">Learn</span>
+        <span class="activity-copy">Reading, math, and coding adventures.</span>
+      </a>
+
+      <a class="activity-card create-card" href="create.html">
+        <span class="activity-icon" aria-hidden="true">🎨</span>
+        <span class="activity-label">Create</span>
+        <span class="activity-copy">Make something completely yours.</span>
+      </a>
+
+      <a class="activity-card weirdo-card" href="character-maker.html">
+        <span class="activity-icon" aria-hidden="true">🖤</span>
+        <span class="activity-label">Make a Weirdo</span>
+        <span class="activity-copy">Build a strange new character.</span>
+      </a>
+
+      <a class="activity-card stuff-card" href="my-stuff.html">
+        <span class="activity-icon" aria-hidden="true">⭐</span>
+        <span class="activity-label">My Stuff</span>
+        <span class="activity-copy"><span data-stars>0</span> stars and saved creations.</span>
+      </a>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="challenge-panel glass-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">TODAY'S MISSION</p>
+            <h2>Zen Challenge</h2>
+          </div>
+          <span class="mission-badge">3 steps</span>
+        </div>
+
+        <div class="challenge-list">
+          <a class="challenge-item" href="reading.html">
+            <span class="challenge-number">01</span>
+            <span class="challenge-text">
+              <strong>Reading warm-up</strong>
+              <small>Play one reading game.</small>
+            </span>
+            <span class="challenge-go">GO</span>
+          </a>
+
+          <a class="challenge-item" href="math.html">
+            <span class="challenge-number">02</span>
+            <span class="challenge-text">
+              <strong>Math power-up</strong>
+              <small>Solve a few quick problems.</small>
+            </span>
+            <span class="challenge-go">GO</span>
+          </a>
+
+          <a class="challenge-item" href="art-studio.html">
+            <span class="challenge-number">03</span>
+            <span class="challenge-text">
+              <strong>Make something weird</strong>
+              <small>Draw whatever is in your head.</small>
+            </span>
+            <span class="challenge-go">GO</span>
+          </a>
+        </div>
+      </article>
+
+      <aside class="power-panel glass-panel">
+        <p class="eyebrow">ZEN POWER</p>
+        <div class="power-score">
+          <span class="power-star" aria-hidden="true">★</span>
+          <strong data-stars>0</strong>
+        </div>
+        <p>Stars earned from learning, creating, and finishing challenges.</p>
+        <a class="small-link" href="my-stuff.html">See my progress →</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Be curious. Be kind. Make weird things.</span>
+    <button class="idea-journal-btn" id="ideaJournalBtn" type="button">💡 Idea Journal</button>
+  </footer>
+
+  <dialog class="jarvie-dialog" id="jarvieDialog">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="close" aria-label="Close">×</button>
+      <p class="eyebrow">JARVIE SAYS</p>
+      <h2 id="dialogTitle">Try this:</h2>
+      <p id="dialogMessage">Draw a creature that lives inside a computer.</p>
+      <button class="primary-btn dialog-action" value="close">Let's do it</button>
+    </form>
+  </dialog>
+
+  <dialog class="jarvie-dialog" id="ideaJournalDialog">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="close" aria-label="Close">×</button>
+      <p class="eyebrow">ZEN'S IDEA JOURNAL</p>
+      <h2>What should we build next?</h2>
+      <textarea id="ideaJournalInput" rows="5" maxlength="500" placeholder="Type an idea, something confusing, or something you want Jarvie to do..."></textarea>
+      <div class="journal-actions">
+        <button class="secondary-btn" id="saveIdeaBtn" type="button">Save idea</button>
+      </div>
+      <p class="save-note" id="ideaSaveNote" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <script src="js/common.js"></script>
+  <script src="js/jarvie.js"></script>
+</body>
+</html>
