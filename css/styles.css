@@ -786,3 +786,17 @@ textarea:focus {
     scroll-behavior: auto !important;
   }
 }
+
+
+.voice-hint {
+  margin: 14px 0 0;
+  color: var(--cyan);
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+
+.sound-toggle[aria-pressed="true"] {
+  border-color: rgba(255, 79, 200, 0.55);
+  box-shadow: 0 0 22px rgba(255, 79, 200, 0.45);
+  background: rgba(255, 79, 200, 0.14);
+}
