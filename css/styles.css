@@ -800,3 +800,88 @@ textarea:focus {
   box-shadow: 0 0 22px rgba(255, 79, 200, 0.45);
   background: rgba(255, 79, 200, 0.14);
 }
+
+/* ===== Come Alive sprint ===== */
+:root {
+  --anim-duration: 1;
+  --anim-play-state: running;
+  --press-scale: .975;
+}
+
+body:not(:has(.hero-panel)) .sitebar {
+  width: min(1180px, calc(100% - 32px));
+  margin: 18px auto 0;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(10, 7, 22, .76);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0,0,0,.26);
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+}
+body:not(:has(.hero-panel)) .nav { padding: 14px 18px; }
+body:not(:has(.hero-panel)) .wrap { width:min(1180px,calc(100% - 32px)); margin:26px auto 60px; }
+body:not(:has(.hero-panel)) .hero,
+body:not(:has(.hero-panel)) .card,
+body:not(:has(.hero-panel)) .game,
+.avatar-stage {
+  border:1px solid var(--line);
+  background:linear-gradient(145deg,rgba(31,20,57,.88),rgba(11,8,25,.76));
+  backdrop-filter:blur(20px);
+  box-shadow:var(--shadow);
+}
+body:not(:has(.hero-panel)) .hero { border-radius:30px; padding:28px 30px; margin-bottom:22px; }
+body:not(:has(.hero-panel)) .card,
+body:not(:has(.hero-panel)) .game { border-radius:24px; }
+
+.btn,.answer,.activity-card,.card,.biglink {
+  transform:translateZ(0);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+}
+@media (hover:hover) and (pointer:fine) {
+  .btn:hover,.answer:hover,.activity-card:hover,.biglink:hover { transform:translateY(-3px); filter:brightness(1.08); }
+}
+.btn:active,.answer:active,.activity-card:active,.biglink:active,.is-pressed { transform:scale(var(--press-scale)) !important; }
+.btn:focus-visible,.answer:focus-visible,.activity-card:focus-visible,.biglink:focus-visible { outline:3px solid var(--cyan); outline-offset:3px; }
+
+.zen-celebrate { animation:zenCelebrate calc(.62s * var(--anim-duration)) ease-out; }
+.zen-shake { animation:zenShake calc(.42s * var(--anim-duration)) ease-in-out; }
+.feedback { min-height:1.6em; position:relative; }
+.zen-celebrate::after {
+  content:"✦  ★  ✦"; position:absolute; left:50%; top:-16px; transform:translateX(-50%);
+  color:var(--gold); text-shadow:0 0 14px var(--pink); pointer-events:none;
+  animation:zenBurst calc(.62s * var(--anim-duration)) ease-out both;
+}
+@keyframes zenCelebrate { 0%{transform:scale(1)} 42%{transform:scale(1.08)} 100%{transform:scale(1)} }
+@keyframes zenShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 50%{transform:translateX(6px)} 75%{transform:translateX(-3px)} }
+@keyframes zenBurst { 0%{opacity:0;transform:translate(-50%,12px) scale(.5)} 45%{opacity:1} 100%{opacity:0;transform:translate(-50%,-24px) scale(1.25)} }
+
+.ambient-spark { position:fixed; left:var(--spark-x,50vw); top:var(--spark-y,30vh); z-index:-1; width:5px; height:5px; border-radius:50%; background:white; opacity:0; box-shadow:0 0 16px 5px rgba(255,79,200,.65); }
+.ambient-spark.is-twinkling { animation:ambientTwinkle calc(1.5s * var(--anim-duration)) ease-out; }
+@keyframes ambientTwinkle { 0%,100%{opacity:0;transform:scale(.2)} 45%{opacity:1;transform:scale(1.5)} }
+
+.jarvie-orb[data-state="listening"] { box-shadow:0 0 35px rgba(88,220,255,.95),0 0 90px rgba(88,220,255,.4); animation:jarvieListen calc(.8s * var(--anim-duration)) ease-in-out infinite alternate; }
+.jarvie-orb[data-state="thinking"] { animation:jarvieThink calc(1.1s * var(--anim-duration)) linear infinite; }
+.jarvie-orb[data-state="speaking"] { animation:jarvieSpeak calc(.48s * var(--anim-duration)) ease-in-out infinite alternate; }
+.jarvie-orb[data-state="error"] { animation:zenShake calc(.42s * var(--anim-duration)) ease-in-out; }
+.jarvie-orb[data-state="navigating"] { filter:hue-rotate(65deg) brightness(1.25); }
+@keyframes jarvieListen { to{transform:scale(1.08)} }
+@keyframes jarvieThink { to{transform:rotate(360deg)} }
+@keyframes jarvieSpeak { to{transform:scale(1.055);filter:brightness(1.2)} }
+
+#drawCanvas { width:100%; height:auto; max-height:70vh; display:block; border-radius:18px; background:#fff; touch-action:none; cursor:crosshair; }
+.canvas-wrap { width:100%; aspect-ratio:1000/650; min-height:320px; }
+
+.avatar-stage { position:relative; overflow:hidden; }
+.avatar-layer-stack { position:absolute; inset:0; pointer-events:none; }
+.avatar-layer { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:1; }
+.avatar-layer[hidden] { display:none; }
+.avatar-fallback { position:relative; z-index:2; }
+.avatar-stage.has-asset .avatar-fallback { opacity:.18; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --anim-duration:.01; --anim-play-state:paused; --press-scale:1; }
+  *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  .nebula,.stars,.jarvie-orb { animation:none !important; }
+}
