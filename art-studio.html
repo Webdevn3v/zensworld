@@ -9,19 +9,74 @@
 <button class="btn" data-tool="brush">🖌️ Brush</button><button class="btn alt" data-tool="eraser">🧽 Eraser</button>
 <button class="btn ghost" data-stamp="⭐">⭐ Stamp</button><button class="btn ghost" data-stamp="💖">💖 Stamp</button><button class="btn ghost" data-stamp="🖤">🖤 Stamp</button><button class="btn ghost" data-stamp="🦇">🦇 Stamp</button>
 <button class="btn alt" id="undo">↩️ Undo</button><button class="btn alt" id="clear">🗑️ Clear</button><button class="btn green" id="download">💾 Save Picture</button>
-</div><canvas id="drawCanvas" width="1000" height="650"></canvas></section></main>
+</div><div class="canvas-wrap"><canvas id="drawCanvas" aria-label="Drawing canvas"></canvas></div><p id="canvasStatus" class="feedback" aria-live="polite"></p></section></main>
 <script src="js/common.js"></script><script>
-const c=drawCanvas,ctx=c.getContext("2d");ctx.fillStyle="white";ctx.fillRect(0,0,c.width,c.height);let drawing=false,tool="brush",stamp=null,history=[];
-function saveState(){history.push(c.toDataURL());if(history.length>20)history.shift()}
-saveState();
-function pos(e){const r=c.getBoundingClientRect(),p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(c.width/r.width),y:(p.clientY-r.top)*(c.height/r.height)}}
-function start(e){e.preventDefault();saveState();let p=pos(e);if(stamp){ctx.font="56px serif";ctx.fillText(stamp,p.x-24,p.y+20);ZEN.complete("art");return}drawing=true;ctx.beginPath();ctx.moveTo(p.x,p.y)}
-function move(e){if(!drawing)return;e.preventDefault();let p=pos(e);ctx.lineCap="round";ctx.lineJoin="round";ctx.lineWidth=+size.value;ctx.strokeStyle=tool==="eraser"?"white":color.value;ctx.lineTo(p.x,p.y);ctx.stroke()}
-function end(){if(drawing){drawing=false;ZEN.complete("art")}}
-["mousedown","touchstart"].forEach(x=>c.addEventListener(x,start,{passive:false}));["mousemove","touchmove"].forEach(x=>c.addEventListener(x,move,{passive:false}));["mouseup","mouseleave","touchend"].forEach(x=>c.addEventListener(x,end));
-document.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>{tool=b.dataset.tool;stamp=null}));
-document.querySelectorAll("[data-stamp]").forEach(b=>b.addEventListener("click",()=>stamp=b.dataset.stamp));
-clear.addEventListener("click",()=>{saveState();ctx.fillStyle="white";ctx.fillRect(0,0,c.width,c.height)});
-undo.addEventListener("click",()=>{if(history.length<2)return;history.pop();let img=new Image();img.onload=()=>ctx.drawImage(img,0,0);img.src=history[history.length-1]});
-download.addEventListener("click",()=>{let a=document.createElement("a");a.download="zens-masterpiece.png";a.href=c.toDataURL("image/png");a.click();ZEN.star(2)});
+(() => {
+  const canvas = document.getElementById("drawCanvas");
+  const wrap = canvas.parentElement;
+  const ctx = canvas.getContext("2d", { alpha: false });
+  const offscreen = document.createElement("canvas");
+  const offctx = offscreen.getContext("2d", { alpha: false });
+  const colorInput = document.getElementById("color");
+  const sizeInput = document.getElementById("size");
+  const status = document.getElementById("canvasStatus");
+  let drawing = false, tool = "brush", stamp = null, activePointer = null, penActive = false, last = null;
+  const history = [];
+
+  function cssSize() {
+    const rect = wrap.getBoundingClientRect();
+    return { width: Math.max(320, Math.round(rect.width)), height: Math.max(300, Math.round(rect.width * .65)) };
+  }
+  function paintWhite(context, width, height) { context.save(); context.fillStyle = "#fff"; context.fillRect(0, 0, width, height); context.restore(); }
+  function resizeCanvas(preserve = true) {
+    const snapshot = preserve && canvas.width ? document.createElement("canvas") : null;
+    if (snapshot) { snapshot.width = canvas.width; snapshot.height = canvas.height; snapshot.getContext("2d").drawImage(canvas, 0, 0); }
+    const { width, height } = cssSize();
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
+    canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+    offscreen.width = canvas.width; offscreen.height = canvas.height;
+    paintWhite(ctx, canvas.width, canvas.height); paintWhite(offctx, offscreen.width, offscreen.height);
+    if (snapshot) { ctx.drawImage(snapshot, 0, 0, canvas.width, canvas.height); offctx.drawImage(snapshot, 0, 0, offscreen.width, offscreen.height); }
+  }
+  function saveState() { history.push(canvas.toDataURL("image/png")); if (history.length > 20) history.shift(); }
+  function restore(data) { const img = new Image(); img.onload = () => { paintWhite(ctx, canvas.width, canvas.height); ctx.drawImage(img,0,0,canvas.width,canvas.height); offctx.drawImage(canvas,0,0); }; img.src = data; }
+  function point(event) { const rect = canvas.getBoundingClientRect(); return { x:(event.clientX-rect.left)*(canvas.width/rect.width), y:(event.clientY-rect.top)*(canvas.height/rect.height) }; }
+  function pressure(event) { return event.pointerType === "pen" && event.pressure > 0 ? Math.max(.25, event.pressure) : 1; }
+  function start(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+    if (penActive && event.pointerType === "touch") return;
+    if (event.pointerType === "pen") penActive = true;
+    if (activePointer !== null) return;
+    activePointer = event.pointerId; canvas.setPointerCapture?.(event.pointerId); saveState();
+    const p = point(event);
+    if (stamp) { ctx.font = `${Math.round(56*(canvas.width/1000))}px serif`; ctx.fillText(stamp,p.x-24,p.y+20); offctx.drawImage(canvas,0,0); ZEN.complete("art"); ZenCommon.celebrate(status); return end(event); }
+    drawing = true; last = p; event.preventDefault();
+  }
+  function move(event) {
+    if (!drawing || event.pointerId !== activePointer) return;
+    if (penActive && event.pointerType === "touch") return;
+    event.preventDefault(); const p = point(event); const scale = canvas.width / Math.max(1, canvas.getBoundingClientRect().width);
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.lineCap="round"; ctx.lineJoin="round";
+    ctx.lineWidth = Number(sizeInput.value) * scale * pressure(event); ctx.strokeStyle = tool === "eraser" ? "#fff" : colorInput.value; ctx.stroke(); last = p;
+  }
+  function end(event) {
+    if (activePointer !== null && event.pointerId !== undefined && event.pointerId !== activePointer) return;
+    if (drawing) { drawing = false; offctx.drawImage(canvas,0,0); ZEN.complete("art"); }
+    if (event?.pointerType === "pen") penActive = false;
+    activePointer = null; last = null;
+  }
+  canvas.addEventListener("pointerdown", start);
+  canvas.addEventListener("pointermove", move);
+  canvas.addEventListener("pointerup", end);
+  canvas.addEventListener("pointercancel", end);
+  canvas.addEventListener("lostpointercapture", end);
+  document.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>{tool=b.dataset.tool;stamp=null;}));
+  document.querySelectorAll("[data-stamp]").forEach(b=>b.addEventListener("click",()=>{stamp=b.dataset.stamp;}));
+  document.getElementById("clear").addEventListener("click",()=>{saveState();paintWhite(ctx,canvas.width,canvas.height);offctx.drawImage(canvas,0,0);status.textContent="Fresh canvas!";});
+  document.getElementById("undo").addEventListener("click",()=>{if(history.length){restore(history.pop());status.textContent="Undid the last move.";}});
+  document.getElementById("download").addEventListener("click",()=>{const a=document.createElement("a");a.download="zens-masterpiece.png";a.href=canvas.toDataURL("image/png");a.click();ZEN.star(2);status.textContent="Saved! Two stars for your masterpiece.";ZenCommon.celebrate(status);});
+  let resizeTimer; window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>resizeCanvas(true),180);});
+  resizeCanvas(false); saveState();
+})();
 </script></body></html>

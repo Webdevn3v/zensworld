@@ -3,7 +3,7 @@
 <nav class="sitebar"><div class="nav"><a class="logo" href="index.html">🎀 ZEN'S CLUBHOUSE 🖤</a><a href="create.html">🎨 Create</a><a href="my-stuff.html">⭐ My Stuff</a></div></nav>
 <main class="wrap"><header class="hero"><h1>🖤 MAKE YOUR OWN WEIRDO</h1><p>build them · dress them · name them · make them weird</p></header>
 <div class="avatar-layout">
-<section class="avatar-stage" id="stage"><div class="avatar" id="avatar">
+<section class="avatar-stage" id="stage"><div class="avatar-layer-stack" id="assetStack" aria-hidden="true"></div><div class="avatar avatar-fallback" id="avatar">
 <div class="av-hair-back"></div><div class="av-head"></div><div class="av-body"></div><div class="av-legs"></div><div class="av-hair-front"></div>
 <div class="av-eyes"><i class="eye"></i><i class="eye"></i></div><div class="av-mouth"></div><div class="av-shoes"><i class="shoe"></i><i class="shoe"></i></div><div class="av-accessory" id="acc">🛹</div><div class="av-hat" id="hat"></div>
 </div></section>
@@ -22,25 +22,23 @@
 <button class="btn" id="saveChar">💾 SAVE TO MY CREW</button><p id="saveMsg" class="tag"></p>
 </section></div></main><script src="js/common.js"></script><script>
 const state={skin:"#d5a07d",hair:"#17121c",top:"#111111",bottom:"#6b315f",shoe:"#111111",accessory:"🛹",hat:"",background:"pink"};
+const assetIds={hair:1,top:1,bottom:1,shoe:1,accessory:1,hat:0,background:1};
 const sets={
-skin:["#f2d2bd","#d9a37f","#b87956","#8a563d","#5c3527"],
-hair:["#17121c","#5a321e","#e7bd76","#a51d50","#ff55a8","#7344c8","#3c64c7"],
-top:["#111111","#ff2d92","#6d318f","#ffffff","#2d415f","#8e1638"],
-bottom:["#222222","#6b315f","#b11365","#3c506d","#7c2020"],
-shoe:["#111111","#ffffff","#ff2d92","#6c3c95"],
-accessory:["🛹","🎧","🎸","👜","📚","🖤","⭐","🦇"],
-hat:["","🎀","🧢","🎧","👑","🕷️"],
-background:[["pink","linear-gradient(#fac4df,#bca3ff)"],["night","linear-gradient(#141229,#47235f)"],["skate","linear-gradient(#a6d7ff,#737983)"],["spooky","linear-gradient(#32243a,#0d0d0f)"],["green","linear-gradient(#d7ff9f,#86b56c)"]]
+skin:["#f2d2bd","#d9a37f","#b87956","#8a563d","#5c3527"],hair:["#17121c","#5a321e","#e7bd76","#a51d50","#ff55a8","#7344c8","#3c64c7"],top:["#111111","#ff2d92","#6d318f","#ffffff","#2d415f","#8e1638"],bottom:["#222222","#6b315f","#b11365","#3c506d","#7c2020"],shoe:["#111111","#ffffff","#ff2d92","#6c3c95"],accessory:["🛹","🎧","🎸","👜","📚","🖤","⭐","🦇"],hat:["","🎀","🧢","🎧","👑","🕷️"],background:[["pink","linear-gradient(#fac4df,#bca3ff)"],["night","linear-gradient(#141229,#47235f)"],["skate","linear-gradient(#a6d7ff,#737983)"],["spooky","linear-gradient(#32243a,#0d0d0f)"],["green","linear-gradient(#d7ff9f,#86b56c)"]]
 };
-function buttons(id,key,vals){let box=document.getElementById(id);vals.forEach(v=>{let value=Array.isArray(v)?v[0]:v,label=Array.isArray(v)?v[0]:v,b=document.createElement("button");b.className="swatch";b.type="button";if(key.match(/skin|hair|top|bottom|shoe/)){b.style.background=value;b.title=key}else b.textContent=value||"NONE";b.addEventListener("click",()=>{state[key]=value;render()});box.appendChild(b)})}
+const assetMap={hair:{folder:"hair",prefix:"hair"},top:{folder:"tops",prefix:"top"},bottom:{folder:"bottoms",prefix:"bottom"},shoe:{folder:"shoes",prefix:"shoe"},accessory:{folder:"accessory",prefix:"accessory"},hat:{folder:"hat",prefix:"hat"},background:{folder:"background",prefix:"bg"}};
+function assetPath(key,id){const m=assetMap[key];return id?`assets/character/${m.folder}/${m.prefix}-${String(id).padStart(2,"0")}.png`:""}
+function renderAssetLayers(){assetStack.innerHTML="";let loaded=0;["background","bottom","shoe","top","hair","accessory","hat"].forEach((key,z)=>{const src=assetPath(key,assetIds[key]);if(!src)return;const img=document.createElement("img");img.className="avatar-layer";img.alt="";img.style.zIndex=String(z+1);img.src=src;img.onload=()=>{loaded++;stage.classList.add("has-asset")};img.onerror=()=>img.remove();assetStack.appendChild(img)});if(!loaded)stage.classList.remove("has-asset")}
+function buttons(id,key,vals){const box=document.getElementById(id);vals.forEach((v,index)=>{const value=Array.isArray(v)?v[0]:v,b=document.createElement("button");b.className="swatch";b.type="button";if(/skin|hair|top|bottom|shoe/.test(key)){b.style.background=value;b.title=`${key} option ${index+1}`}else b.textContent=value||"NONE";b.addEventListener("click",()=>{state[key]=value;if(assetIds[key]!==undefined)assetIds[key]=index+1;render()});box.appendChild(b)})}
 buttons("skin","skin",sets.skin);buttons("hair","hair",sets.hair);buttons("top","top",sets.top);buttons("bottom","bottom",sets.bottom);buttons("shoe","shoe",sets.shoe);buttons("accessory","accessory",sets.accessory);buttons("hatOpts","hat",sets.hat);buttons("background","background",sets.background);
-function render(){avatar.style.setProperty("--skin",state.skin);avatar.style.setProperty("--hair",state.hair);avatar.style.setProperty("--top",state.top);avatar.style.setProperty("--bottom",state.bottom);avatar.style.setProperty("--shoe",state.shoe);acc.textContent=state.accessory;hat.textContent=state.hat;let bg=sets.background.find(x=>x[0]===state.background);stage.style.background=bg?bg[1]:sets.background[0][1]}
-function pick(a){return a[Math.floor(Math.random()*a.length)]}
-function random(){state.skin=pick(sets.skin);state.hair=pick(sets.hair);state.top=pick(sets.top);state.bottom=pick(sets.bottom);state.shoe=pick(sets.shoe);state.accessory=pick(sets.accessory);state.hat=pick(sets.hat);state.background=pick(sets.background)[0];render()}
+function render(){avatar.style.setProperty("--skin",state.skin);avatar.style.setProperty("--hair",state.hair);avatar.style.setProperty("--top",state.top);avatar.style.setProperty("--bottom",state.bottom);avatar.style.setProperty("--shoe",state.shoe);acc.textContent=state.accessory;hat.textContent=state.hat;const bg=sets.background.find(x=>x[0]===state.background);stage.style.background=bg?bg[1]:sets.background[0][1];renderAssetLayers()}
+function pick(a){return Math.floor(Math.random()*a.length)}
+function random(){["skin","hair","top","bottom","shoe","accessory","hat"].forEach(key=>{const i=pick(sets[key]);state[key]=sets[key][i];if(assetIds[key]!==undefined)assetIds[key]=i+1});const bi=pick(sets.background);state.background=sets.background[bi][0];assetIds.background=bi+1;render()}
 randomize.addEventListener("click",random);
-presetEmo.addEventListener("click",()=>{Object.assign(state,{hair:"#17121c",top:"#111111",bottom:"#222222",shoe:"#111111",accessory:"🎧",hat:"🕷️",background:"night"});render()});
-presetPink.addEventListener("click",()=>{Object.assign(state,{hair:"#ff55a8",top:"#ff2d92",bottom:"#6b315f",shoe:"#ffffff",accessory:"🛹",hat:"🎀",background:"pink"});render()});
-presetSpooky.addEventListener("click",()=>{Object.assign(state,{hair:"#17121c",top:"#6d318f",bottom:"#111111",shoe:"#111111",accessory:"🦇",hat:"🕷️",background:"spooky"});render()});
-saveChar.addEventListener("click",()=>{let name=charName.value.trim()||"Unnamed Weirdo";let chars=ZEN.load("characters",[]);chars.push({...state,name,personality:personality.value,id:Date.now()});ZEN.save("characters",chars);ZEN.star(3);saveMsg.textContent=name+" joined your crew! 🖤";charName.value=""});
+function preset(values,ids){Object.assign(state,values);Object.assign(assetIds,ids);render()}
+presetEmo.addEventListener("click",()=>preset({hair:"#17121c",top:"#111111",bottom:"#222222",shoe:"#111111",accessory:"🎧",hat:"🕷️",background:"night"},{hair:1,top:1,bottom:1,shoe:1,accessory:2,hat:6,background:2}));
+presetPink.addEventListener("click",()=>preset({hair:"#ff55a8",top:"#ff2d92",bottom:"#6b315f",shoe:"#ffffff",accessory:"🛹",hat:"🎀",background:"pink"},{hair:5,top:2,bottom:2,shoe:2,accessory:1,hat:2,background:1}));
+presetSpooky.addEventListener("click",()=>preset({hair:"#17121c",top:"#6d318f",bottom:"#111111",shoe:"#111111",accessory:"🦇",hat:"🕷️",background:"spooky"},{hair:1,top:3,bottom:1,shoe:1,accessory:8,hat:6,background:4}));
+saveChar.addEventListener("click",()=>{const name=charName.value.trim()||"Unnamed Weirdo",chars=ZEN.load("characters",[]);chars.push({...state,name,personality:personality.value,id:Date.now()});ZEN.save("characters",chars);ZEN.star(3);saveMsg.textContent=name+" joined your crew! 🖤";ZenCommon.celebrate(saveMsg);ZenBus.emit("character:created",{name});charName.value=""});
 render();
 </script></body></html>
